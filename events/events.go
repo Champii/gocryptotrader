@@ -12,7 +12,6 @@ import (
 	"github.com/champii/gocryptotrader/currency"
 	"github.com/champii/gocryptotrader/currency/pair"
 	"github.com/champii/gocryptotrader/exchanges/ticker"
-	"github.com/champii/gocryptotrader/smsglobal"
 )
 
 const (
@@ -43,13 +42,13 @@ type Event struct {
 	Condition      string
 	FirstCurrency  string
 	SecondCurrency string
-	Action         string
+	Action         func(e *Event, t *ticker.TickerPrice) bool
 	Executed       bool
 }
 
 var Events []*Event
 
-func AddEvent(Exchange, Item, Condition, FirstCurrency, SecondCurrency, Action string) (int, error) {
+func AddEvent(Exchange, Item, Condition, FirstCurrency, SecondCurrency string, Action func(e *Event, t *ticker.TickerPrice) bool) (int, error) {
 	err := IsValidEvent(Exchange, Item, Condition, Action)
 	if err != nil {
 		return 0, err
@@ -100,21 +99,22 @@ func GetEventCounter() (int, int) {
 	return total, executed
 }
 
-func (e *Event) ExecuteAction() bool {
-	if common.StringContains(e.Action, ",") {
-		action := common.SplitStrings(e.Action, ",")
-		if action[0] == ACTION_SMS_NOTIFY {
-			message := fmt.Sprintf("Event triggered: %s", e.EventToString())
-			if action[1] == "ALL" {
-				smsglobal.SMSSendToAll(message, config.Cfg)
-			} else {
-				smsglobal.SMSNotify(smsglobal.SMSGetNumberByName(action[1], config.Cfg.SMS), message, config.Cfg)
-			}
-		}
-	} else {
-		log.Printf("Event triggered: %s", e.EventToString())
-	}
-	return true
+func (e *Event) ExecuteAction(tick ticker.TickerPrice) bool {
+	return e.Action(e, &tick)
+	// if common.StringContains(e.Action, ",") {
+	// 	action := common.SplitStrings(e.Action,",")
+	// 	if action[0] == ACTION_SMS_NOTIFY {
+	// 		message := fmt.Sprintf("Event triggered: %s", e.EventToString())
+	// 		if action[1] == "ALL" {
+	// 			smsglobal.SMSSendToAll(message, config.Cfg)
+	// 		} else {
+	// 			smsglobal.SMSNotify(smsglobal.SMSGetNumberByName(action[1], config.Cfg.SMS), message, config.Cfg)
+	// 		}
+	// 	}
+	// } else {
+	// 	log.Printf("Event triggered: %s", e.EventToString())
+	// }
+	// return true
 }
 
 func (e *Event) EventToString() string {
@@ -132,6 +132,8 @@ func (e *Event) CheckCondition() bool { //Add error handling
 		return false
 	}
 
+	t := ticker.Price[pair.CurrencyItem(e.FirstCurrency)][pair.CurrencyItem(e.SecondCurrency)]
+
 	lastPrice = ticker.Price[pair.CurrencyItem(e.FirstCurrency)][pair.CurrencyItem(e.SecondCurrency)].Last
 
 	if lastPrice == 0 {
@@ -142,46 +144,42 @@ func (e *Event) CheckCondition() bool { //Add error handling
 	case GREATER_THAN:
 		{
 			if lastPrice > targetPrice {
-				return e.ExecuteAction()
+				return e.ExecuteAction(t)
 			}
 		}
 	case GREATER_THAN_OR_EQUAL:
 		{
 			if lastPrice >= targetPrice {
-				return e.ExecuteAction()
+				return e.ExecuteAction(t)
 			}
 		}
 	case LESS_THAN:
 		{
 			if lastPrice < targetPrice {
-				return e.ExecuteAction()
+				return e.ExecuteAction(t)
 			}
 		}
 	case LESS_THAN_OR_EQUAL:
 		{
 			if lastPrice <= targetPrice {
-				return e.ExecuteAction()
+				return e.ExecuteAction(t)
 			}
 		}
 	case IS_EQUAL:
 		{
 			if lastPrice == targetPrice {
-				return e.ExecuteAction()
+				return e.ExecuteAction(t)
 			}
 		}
 	}
 	return false
 }
 
-func IsValidEvent(Exchange, Item, Condition, Action string) error {
+func IsValidEvent(Exchange, Item, Condition string, Action func(e *Event, t *ticker.TickerPrice) bool) error {
 	Exchange = common.StringToUpper(Exchange)
 	Item = common.StringToUpper(Item)
-	Action = common.StringToUpper(Action)
 
 	configPath := ""
-	if Action == ACTION_TEST {
-		configPath = CONFIG_PATH_TEST
-	}
 
 	if !IsValidExchange(Exchange, configPath) {
 		return ErrExchangeDisabled
@@ -201,21 +199,6 @@ func IsValidEvent(Exchange, Item, Condition, Action string) error {
 		return ErrInvalidCondition
 	}
 
-	if common.StringContains(Action, ",") {
-		action := common.SplitStrings(Action, ",")
-
-		if action[0] != ACTION_SMS_NOTIFY {
-			return ErrInvalidAction
-		}
-
-		if action[1] != "ALL" && smsglobal.SMSGetNumberByName(action[1], config.Cfg.SMS) == smsglobal.ErrSMSContactNotFound {
-			return ErrInvalidAction
-		}
-	} else {
-		if Action != ACTION_CONSOLE_PRINT && Action != ACTION_TEST {
-			return ErrInvalidAction
-		}
-	}
 	return nil
 }
 

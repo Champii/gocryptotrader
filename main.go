@@ -97,9 +97,7 @@ func (b *Bot) Wait() {
 	Shutdown()
 }
 
-type Message string
-
-func (b *Bot) Start(c chan Message) {
+func (b *Bot) Start(c chan string) {
 	HandleInterrupt()
 	b.config = &config.Cfg
 	log.Printf("Loading config file %s..\n", config.CONFIG_FILE)
