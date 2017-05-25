@@ -1,10 +1,10 @@
-package main
+package gocryptotrader
 
 import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/thrasher-/gocryptotrader/config"
+	"github.com/champii/gocryptotrader/config"
 )
 
 func GetAllSettings(w http.ResponseWriter, r *http.Request) {

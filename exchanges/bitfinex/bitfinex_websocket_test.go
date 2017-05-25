@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/gorilla/websocket"
-	"github.com/thrasher-/gocryptotrader/common"
+	"github.com/champii/gocryptotrader/common"
 )
 
 func TestWebsocketPingHandler(t *testing.T) {

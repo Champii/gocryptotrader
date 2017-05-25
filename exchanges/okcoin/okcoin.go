@@ -8,9 +8,9 @@ import (
 	"strings"
 
 	"github.com/gorilla/websocket"
-	"github.com/thrasher-/gocryptotrader/common"
-	"github.com/thrasher-/gocryptotrader/config"
-	"github.com/thrasher-/gocryptotrader/exchanges"
+	"github.com/champii/gocryptotrader/common"
+	"github.com/champii/gocryptotrader/config"
+	"github.com/champii/gocryptotrader/exchanges"
 )
 
 const (

@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/thrasher-/gocryptotrader/common"
-	"github.com/thrasher-/gocryptotrader/config"
-	"github.com/thrasher-/gocryptotrader/currency"
+	"github.com/champii/gocryptotrader/common"
+	"github.com/champii/gocryptotrader/config"
+	"github.com/champii/gocryptotrader/currency"
 )
 
 var ACCOUNT_LIVE_TEST bool = false //Supply correct API keys in testdata/configtest.dat before changing this.

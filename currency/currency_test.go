@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/thrasher-/gocryptotrader/common"
+	"github.com/champii/gocryptotrader/common"
 )
 
 func TestIsDefaultCurrency(t *testing.T) {

@@ -4,8 +4,8 @@ import (
 	"flag"
 	"log"
 
-	"github.com/thrasher-/gocryptotrader/common"
-	"github.com/thrasher-/gocryptotrader/config"
+	"github.com/champii/gocryptotrader/common"
+	"github.com/champii/gocryptotrader/config"
 )
 
 func EncryptOrDecrypt(encrypt bool) string {

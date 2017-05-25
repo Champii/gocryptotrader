@@ -1,10 +1,10 @@
 ## Cryptocurrency trading bot written in Golang
-[![Build Status](https://travis-ci.org/thrasher-/gocryptotrader.svg?branch=master)](https://travis-ci.org/thrasher-/gocryptotrader)
-[![Software License](https://img.shields.io/badge/License-MIT-orange.svg?style=flat-square)](https://github.com/thrasher-/gocryptotrader/blob/master/LICENSE)
-[![GoDoc](https://godoc.org/github.com/thrasher-/gocryptotrader?status.svg)](https://godoc.org/github.com/thrasher-/gocryptotrader)
-[![Coverage Status](http://codecov.io/github/thrasher-/gocryptotrader/coverage.svg?branch=master)](http://codecov.io/github/thrasher-/gocryptotrader?branch=master)
+[![Build Status](https://travis-ci.org/champii/gocryptotrader.svg?branch=master)](https://travis-ci.org/champii/gocryptotrader)
+[![Software License](https://img.shields.io/badge/License-MIT-orange.svg?style=flat-square)](https://github.com/champii/gocryptotrader/blob/master/LICENSE)
+[![GoDoc](https://godoc.org/github.com/champii/gocryptotrader?status.svg)](https://godoc.org/github.com/champii/gocryptotrader)
+[![Coverage Status](http://codecov.io/github/champii/gocryptotrader/coverage.svg?branch=master)](http://codecov.io/github/champii/gocryptotrader?branch=master)
 
-A cryptocurrency trading bot supporting multiple exchanges written in Golang. 
+A cryptocurrency trading bot supporting multiple exchanges written in Golang.
 
 **Please note that this bot is under development and is not ready for production!**
 
@@ -24,7 +24,7 @@ A cryptocurrency trading bot supporting multiple exchanges written in Golang.
 | Huobi | Yes | Yes |No |
 | ItBit | Yes | NA | NA |
 | Kraken | Yes | NA | NA |
-| LakeBTC | Yes | No | NA | 
+| LakeBTC | Yes | No | NA |
 | Liqui | Yes | No | NA |
 | LocalBitcoins | Yes | NA | NA |
 | OKCoin (both) | Yes | Yes | No |
@@ -57,16 +57,16 @@ When submitting a PR, please abide by our coding guidelines:
 
 * Code must adhere to the official Go [formatting](https://golang.org/doc/effective_go.html#formatting) guidelines (i.e. uses [gofmt](https://golang.org/cmd/gofmt/)).
 * Code must be documented adhering to the official Go [commentary](https://golang.org/doc/effective_go.html#commentary) guidelines.
-* Code must adhere to our [coding style](https://github.com/thrasher-/gocryptotrader/blob/master/doc/coding_style.md).
+* Code must adhere to our [coding style](https://github.com/champii/gocryptotrader/blob/master/doc/coding_style.md).
 * Pull requests need to be based on and opened against the `master` branch.
 
 ## Compiling instructions
-Download Go from https://golang.org/dl/  
-Using a terminal, type go get github.com/thrasher-/gocryptotrader  
-Change directory to the package directory, then type go install.  
-Copy config_example.dat to config.dat.  
-Make any neccessary changes to the config file.  
-Run the application!  
+Download Go from https://golang.org/dl/
+Using a terminal, type go get github.com/champii/gocryptotrader
+Change directory to the package directory, then type go install.
+Copy config_example.dat to config.dat.
+Make any neccessary changes to the config file.
+Run the application!
 
 ## Binaries
 Binaries will be published once the codebase reaches a stable condition.

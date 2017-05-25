@@ -1,37 +1,38 @@
-package main
+package gocryptotrader
 
 import (
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"runtime"
 	"strconv"
 	"syscall"
 
-	"github.com/thrasher-/gocryptotrader/common"
-	"github.com/thrasher-/gocryptotrader/config"
-	"github.com/thrasher-/gocryptotrader/currency"
-	"github.com/thrasher-/gocryptotrader/exchanges"
-	"github.com/thrasher-/gocryptotrader/exchanges/anx"
-	"github.com/thrasher-/gocryptotrader/exchanges/bitfinex"
-	"github.com/thrasher-/gocryptotrader/exchanges/bitstamp"
-	"github.com/thrasher-/gocryptotrader/exchanges/btcc"
-	"github.com/thrasher-/gocryptotrader/exchanges/btce"
-	"github.com/thrasher-/gocryptotrader/exchanges/btcmarkets"
-	"github.com/thrasher-/gocryptotrader/exchanges/gdax"
-	"github.com/thrasher-/gocryptotrader/exchanges/gemini"
-	"github.com/thrasher-/gocryptotrader/exchanges/huobi"
-	"github.com/thrasher-/gocryptotrader/exchanges/itbit"
-	"github.com/thrasher-/gocryptotrader/exchanges/kraken"
-	"github.com/thrasher-/gocryptotrader/exchanges/lakebtc"
-	"github.com/thrasher-/gocryptotrader/exchanges/liqui"
-	"github.com/thrasher-/gocryptotrader/exchanges/localbitcoins"
-	"github.com/thrasher-/gocryptotrader/exchanges/okcoin"
-	"github.com/thrasher-/gocryptotrader/exchanges/poloniex"
-	"github.com/thrasher-/gocryptotrader/exchanges/ticker"
-	"github.com/thrasher-/gocryptotrader/portfolio"
-	"github.com/thrasher-/gocryptotrader/smsglobal"
+	"fmt"
+
+	"github.com/champii/gocryptotrader/common"
+	"github.com/champii/gocryptotrader/config"
+	"github.com/champii/gocryptotrader/currency"
+	"github.com/champii/gocryptotrader/exchanges"
+	"github.com/champii/gocryptotrader/exchanges/anx"
+	"github.com/champii/gocryptotrader/exchanges/bitfinex"
+	"github.com/champii/gocryptotrader/exchanges/bitstamp"
+	"github.com/champii/gocryptotrader/exchanges/btcc"
+	"github.com/champii/gocryptotrader/exchanges/btce"
+	"github.com/champii/gocryptotrader/exchanges/btcmarkets"
+	"github.com/champii/gocryptotrader/exchanges/gdax"
+	"github.com/champii/gocryptotrader/exchanges/gemini"
+	"github.com/champii/gocryptotrader/exchanges/huobi"
+	"github.com/champii/gocryptotrader/exchanges/itbit"
+	"github.com/champii/gocryptotrader/exchanges/kraken"
+	"github.com/champii/gocryptotrader/exchanges/lakebtc"
+	"github.com/champii/gocryptotrader/exchanges/liqui"
+	"github.com/champii/gocryptotrader/exchanges/localbitcoins"
+	"github.com/champii/gocryptotrader/exchanges/okcoin"
+	"github.com/champii/gocryptotrader/exchanges/poloniex"
+	"github.com/champii/gocryptotrader/exchanges/ticker"
+	"github.com/champii/gocryptotrader/portfolio"
+	"github.com/champii/gocryptotrader/smsglobal"
 )
 
 type ExchangeMain struct {
@@ -58,7 +59,7 @@ type Bot struct {
 	config    *config.Config
 	portfolio *portfolio.PortfolioBase
 	exchange  ExchangeMain
-	exchanges []exchange.IBotExchange
+	Exchanges []exchange.IBotExchange
 	tickers   []ticker.Ticker
 	shutdown  chan bool
 }
@@ -67,13 +68,13 @@ var bot Bot
 
 func setupBotExchanges() {
 	for _, exch := range bot.config.Exchanges {
-		for i := 0; i < len(bot.exchanges); i++ {
-			if bot.exchanges[i] != nil {
-				if bot.exchanges[i].GetName() == exch.Name {
-					bot.exchanges[i].Setup(exch)
-					if bot.exchanges[i].IsEnabled() {
+		for i := 0; i < len(bot.Exchanges); i++ {
+			if bot.Exchanges[i] != nil {
+				if bot.Exchanges[i].GetName() == exch.Name {
+					bot.Exchanges[i].Setup(exch)
+					if bot.Exchanges[i].IsEnabled() {
 						log.Printf("%s: Exchange support: %s (Authenticated API support: %s - Verbose mode: %s).\n", exch.Name, common.IsEnabled(exch.Enabled), common.IsEnabled(exch.AuthenticatedAPISupport), common.IsEnabled(exch.Verbose))
-						bot.exchanges[i].Start()
+						bot.Exchanges[i].Start()
 					} else {
 						log.Printf("%s: Exchange support: %s\n", exch.Name, common.IsEnabled(exch.Enabled))
 					}
@@ -83,35 +84,50 @@ func setupBotExchanges() {
 	}
 }
 
-func main() {
+func (b *Bot) Test() {
+	fmt.Println("lol")
+}
+
+func Get() *Bot {
+	return &bot
+}
+
+func (b *Bot) Wait() {
+	<-b.shutdown
+	Shutdown()
+}
+
+type Message string
+
+func (b *Bot) Start(c chan Message) {
 	HandleInterrupt()
-	bot.config = &config.Cfg
+	b.config = &config.Cfg
 	log.Printf("Loading config file %s..\n", config.CONFIG_FILE)
 
-	err := bot.config.LoadConfig("")
+	err := b.config.LoadConfig("")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Printf("Bot '%s' started.\n", bot.config.Name)
+	log.Printf("Bot '%s' started.\n", b.config.Name)
 	AdjustGoMaxProcs()
 
-	if bot.config.SMS.Enabled {
-		err = bot.config.CheckSMSGlobalConfigValues()
+	if b.config.SMS.Enabled {
+		err = b.config.CheckSMSGlobalConfigValues()
 		if err != nil {
 			log.Println(err) // non fatal event
-			bot.config.SMS.Enabled = false
+			b.config.SMS.Enabled = false
 		} else {
-			log.Printf("SMS support enabled. Number of SMS contacts %d.\n", smsglobal.GetEnabledSMSContacts(bot.config.SMS))
+			log.Printf("SMS support enabled. Number of SMS contacts %d.\n", smsglobal.GetEnabledSMSContacts(b.config.SMS))
 		}
 	} else {
 		log.Println("SMS support disabled.")
 	}
 
-	log.Printf("Available Exchanges: %d. Enabled Exchanges: %d.\n", len(bot.config.Exchanges), bot.config.GetConfigEnabledExchanges())
+	log.Printf("Available Exchanges: %d. Enabled Exchanges: %d.\n", len(b.config.Exchanges), b.config.GetConfigEnabledExchanges())
 	log.Println("Bot Exchange support:")
 
-	bot.exchanges = []exchange.IBotExchange{
+	b.Exchanges = []exchange.IBotExchange{
 		new(anx.ANX),
 		new(kraken.Kraken),
 		new(btcc.BTCC),
@@ -131,16 +147,16 @@ func main() {
 		new(huobi.HUOBI),
 	}
 
-	for i := 0; i < len(bot.exchanges); i++ {
-		if bot.exchanges[i] != nil {
-			bot.exchanges[i].SetDefaults()
-			log.Printf("Exchange %s successfully set default settings.\n", bot.exchanges[i].GetName())
+	for i := 0; i < len(b.Exchanges); i++ {
+		if b.Exchanges[i] != nil {
+			b.Exchanges[i].SetDefaults()
+			log.Printf("Exchange %s successfully set default settings.\n", b.Exchanges[i].GetName())
 		}
 	}
 
 	setupBotExchanges()
 
-	bot.config.RetrieveConfigCurrencyPairs()
+	b.config.RetrieveConfigCurrencyPairs()
 
 	err = currency.SeedCurrencyData(currency.BaseCurrencies)
 	if err != nil {
@@ -149,29 +165,30 @@ func main() {
 
 	log.Println("Successfully retrieved config currencies.")
 
-	bot.portfolio = &portfolio.Portfolio
-	bot.portfolio.SeedPortfolio(bot.config.Portfolio)
+	b.portfolio = &portfolio.Portfolio
+	b.portfolio.SeedPortfolio(b.config.Portfolio)
 	SeedExchangeAccountInfo(GetAllEnabledExchangeAccountInfo().Data)
 	go portfolio.StartPortfolioWatcher()
 
-	if bot.config.Webserver.Enabled {
-		err := bot.config.CheckWebserverConfigValues()
-		if err != nil {
-			log.Println(err) // non fatal event
-			//bot.config.Webserver.Enabled = false
-		} else {
-			listenAddr := bot.config.Webserver.ListenAddress
-			log.Printf("HTTP Webserver support enabled. Listen URL: http://%s:%d/\n", common.ExtractHost(listenAddr), common.ExtractPort(listenAddr))
-			router := NewRouter(bot.exchanges)
-			log.Fatal(http.ListenAndServe(listenAddr, router))
-		}
-	}
-	if !bot.config.Webserver.Enabled {
-		log.Println("HTTP Webserver support disabled.")
-	}
+	// if b.config.Webserver.Enabled {
+	// 	err := b.config.CheckWebserverConfigValues()
+	// 	if err != nil {
+	// 		log.Println(err) // non fatal event
+	// 		//b.config.Webserver.Enabled = false
+	// 	} else {
+	// 		listenAddr := b.config.Webserver.ListenAddress
+	// 		log.Printf("HTTP Webserver support enabled. Listen URL: http://%s:%d/\n", common.ExtractHost(listenAddr), common.ExtractPort(listenAddr))
+	// 		router := NewRouter(b.exchanges)
+	// 		log.Fatal(http.ListenAndServe(listenAddr, router))
+	// 	}
+	// }
+	// if !b.config.Webserver.Enabled {
+	// 	log.Println("HTTP Webserver support disabled.")
+	// }
 
-	<-bot.shutdown
-	Shutdown()
+	// <-b.shutdown
+	// Shutdown()
+	c <- "ready"
 }
 
 func AdjustGoMaxProcs() {

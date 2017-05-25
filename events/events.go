@@ -6,12 +6,12 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/thrasher-/gocryptotrader/common"
-	"github.com/thrasher-/gocryptotrader/config"
-	"github.com/thrasher-/gocryptotrader/currency"
-	"github.com/thrasher-/gocryptotrader/currency/pair"
-	"github.com/thrasher-/gocryptotrader/exchanges/ticker"
-	"github.com/thrasher-/gocryptotrader/smsglobal"
+	"github.com/champii/gocryptotrader/common"
+	"github.com/champii/gocryptotrader/config"
+	"github.com/champii/gocryptotrader/currency"
+	"github.com/champii/gocryptotrader/currency/pair"
+	"github.com/champii/gocryptotrader/exchanges/ticker"
+	"github.com/champii/gocryptotrader/smsglobal"
 )
 
 const (

@@ -3,7 +3,7 @@ package smsglobal
 import (
 	"testing"
 
-	"github.com/thrasher-/gocryptotrader/config"
+	"github.com/champii/gocryptotrader/config"
 )
 
 func TestGetEnabledSMSContacts(t *testing.T) {

@@ -1,10 +1,10 @@
-package main
+package gocryptotrader
 
 import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/thrasher-/gocryptotrader/exchanges"
+	"github.com/champii/gocryptotrader/exchanges"
 )
 
 func NewRouter(exchanges []exchange.IBotExchange) *mux.Router {

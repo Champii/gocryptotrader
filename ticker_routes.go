@@ -1,13 +1,13 @@
-package main
+package gocryptotrader
 
 import (
 	"encoding/json"
 	"log"
 	"net/http"
 
+	"github.com/champii/gocryptotrader/currency/pair"
+	"github.com/champii/gocryptotrader/exchanges/ticker"
 	"github.com/gorilla/mux"
-	"github.com/thrasher-/gocryptotrader/currency/pair"
-	"github.com/thrasher-/gocryptotrader/exchanges/ticker"
 )
 
 func jsonTickerResponse(w http.ResponseWriter, r *http.Request) {
@@ -16,10 +16,10 @@ func jsonTickerResponse(w http.ResponseWriter, r *http.Request) {
 	exchangeName := vars["exchangeName"]
 	var response ticker.TickerPrice
 	var err error
-	for i := 0; i < len(bot.exchanges); i++ {
-		if bot.exchanges[i] != nil {
-			if bot.exchanges[i].IsEnabled() && bot.exchanges[i].GetName() == exchangeName {
-				response, err = bot.exchanges[i].GetTickerPrice(pair.NewCurrencyPairFromString(currency))
+	for i := 0; i < len(bot.Exchanges); i++ {
+		if bot.Exchanges[i] != nil {
+			if bot.Exchanges[i].IsEnabled() && bot.Exchanges[i].GetName() == exchangeName {
+				response, err = bot.Exchanges[i].GetTickerPrice(pair.NewCurrencyPairFromString(currency))
 				if err != nil {
 					log.Println(err)
 					continue
@@ -49,7 +49,7 @@ type EnabledExchangeCurrencies struct {
 func getAllActiveTickersResponse(w http.ResponseWriter, r *http.Request) {
 	var response AllEnabledExchangeCurrencies
 
-	for _, individualBot := range bot.exchanges {
+	for _, individualBot := range bot.Exchanges {
 		if individualBot != nil && individualBot.IsEnabled() {
 			var individualExchange EnabledExchangeCurrencies
 			individualExchange.ExchangeName = individualBot.GetName()

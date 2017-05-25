@@ -1,4 +1,4 @@
-package main
+package gocryptotrader
 
 const (
 	LIMIT_ORDER = iota

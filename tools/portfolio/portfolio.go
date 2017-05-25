@@ -5,11 +5,11 @@ import (
 	"log"
 	"net/url"
 
-	"github.com/thrasher-/gocryptotrader/common"
-	"github.com/thrasher-/gocryptotrader/config"
-	"github.com/thrasher-/gocryptotrader/currency"
-	"github.com/thrasher-/gocryptotrader/exchanges/bitfinex"
-	"github.com/thrasher-/gocryptotrader/portfolio"
+	"github.com/champii/gocryptotrader/common"
+	"github.com/champii/gocryptotrader/config"
+	"github.com/champii/gocryptotrader/currency"
+	"github.com/champii/gocryptotrader/exchanges/bitfinex"
+	"github.com/champii/gocryptotrader/portfolio"
 )
 
 func main() {

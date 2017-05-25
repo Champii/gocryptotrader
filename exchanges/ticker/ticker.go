@@ -4,8 +4,8 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/thrasher-/gocryptotrader/common"
-	"github.com/thrasher-/gocryptotrader/currency/pair"
+	"github.com/champii/gocryptotrader/common"
+	"github.com/champii/gocryptotrader/currency/pair"
 )
 
 var (

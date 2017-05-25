@@ -1,4 +1,4 @@
-package main
+package gocryptotrader
 
 import (
 	"encoding/json"
@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/thrasher-/gocryptotrader/exchanges"
+	"github.com/champii/gocryptotrader/exchanges"
 )
 
 type AllEnabledExchangeAccounts struct {
@@ -46,7 +46,7 @@ func GetAccountCurrencyInfoByExchangeName(accounts []exchange.ExchangeAccountInf
 
 func GetAllEnabledExchangeAccountInfo() AllEnabledExchangeAccounts {
 	var response AllEnabledExchangeAccounts
-	for _, individualBot := range bot.exchanges {
+	for _, individualBot := range bot.Exchanges {
 		if individualBot != nil && individualBot.IsEnabled() {
 			individualExchange, err := individualBot.GetExchangeAccountInfo()
 			if err != nil {

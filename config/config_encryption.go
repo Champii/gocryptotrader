@@ -11,7 +11,7 @@ import (
 	"log"
 	"reflect"
 
-	"github.com/thrasher-/gocryptotrader/common"
+	"github.com/champii/gocryptotrader/common"
 )
 
 const (

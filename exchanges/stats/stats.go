@@ -3,7 +3,7 @@ package stats
 import (
 	"sort"
 
-	"github.com/thrasher-/gocryptotrader/currency"
+	"github.com/champii/gocryptotrader/currency"
 )
 
 type ExchangeInfo struct {

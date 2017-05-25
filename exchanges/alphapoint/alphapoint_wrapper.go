@@ -3,10 +3,10 @@ package alphapoint
 import (
 	"log"
 
-	"github.com/thrasher-/gocryptotrader/currency/pair"
-	"github.com/thrasher-/gocryptotrader/exchanges"
-	"github.com/thrasher-/gocryptotrader/exchanges/orderbook"
-	"github.com/thrasher-/gocryptotrader/exchanges/ticker"
+	"github.com/champii/gocryptotrader/currency/pair"
+	"github.com/champii/gocryptotrader/exchanges"
+	"github.com/champii/gocryptotrader/exchanges/orderbook"
+	"github.com/champii/gocryptotrader/exchanges/ticker"
 )
 
 //GetExchangeAccountInfo : Retrieves balances for all enabled currencies for the Alphapoint exchange
