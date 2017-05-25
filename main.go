@@ -12,7 +12,7 @@ import (
 
 	"github.com/champii/gocryptotrader/common"
 	"github.com/champii/gocryptotrader/config"
-	"github.com/champii/gocryptotrader/currency"
+	"github.com/champii/gocryptotrader/events"
 	"github.com/champii/gocryptotrader/exchanges"
 	"github.com/champii/gocryptotrader/exchanges/anx"
 	"github.com/champii/gocryptotrader/exchanges/bitfinex"
@@ -158,10 +158,10 @@ func (b *Bot) Start(c chan Message) {
 
 	b.config.RetrieveConfigCurrencyPairs()
 
-	err = currency.SeedCurrencyData(currency.BaseCurrencies)
-	if err != nil {
-		log.Fatalf("Fatal error retrieving config currencies. Error: %s", err)
-	}
+	// err = currency.SeedCurrencyData(currency.BaseCurrencies)
+	// if err != nil {
+	// 	log.Fatalf("Fatal error retrieving config currencies. Error: %s", err)
+	// }
 
 	log.Println("Successfully retrieved config currencies.")
 
@@ -169,6 +169,7 @@ func (b *Bot) Start(c chan Message) {
 	b.portfolio.SeedPortfolio(b.config.Portfolio)
 	SeedExchangeAccountInfo(GetAllEnabledExchangeAccountInfo().Data)
 	go portfolio.StartPortfolioWatcher()
+	go func() { events.CheckEvents() }()
 
 	// if b.config.Webserver.Enabled {
 	// 	err := b.config.CheckWebserverConfigValues()

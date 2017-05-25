@@ -42,6 +42,7 @@ func (b *BTCE) Run() {
 				x = common.StringToUpper(x[0:3] + x[4:])
 				log.Printf("BTC-e %s: Last %f High %f Low %f Volume %f\n", x, y.Last, y.High, y.Low, y.Vol_cur)
 				b.Ticker[x] = y
+				b.GetTickerPrice2(pair.NewCurrencyPairFromString(pairsString), b.Ticker[x])
 				stats.AddExchangeInfo(b.GetName(), common.StringToUpper(x[0:3]), common.StringToUpper(x[4:]), y.Last, y.Vol_cur)
 			}
 		}()
@@ -51,10 +52,24 @@ func (b *BTCE) Run() {
 
 func (b *BTCE) GetTickerPrice(p pair.CurrencyPair) (ticker.TickerPrice, error) {
 	var tickerPrice ticker.TickerPrice
-	tick, ok := b.Ticker[p.Pair().Lower().String()]
-	if !ok {
+	tick, ok := ticker.GetTicker(b.GetName(), p)
+	if ok != nil {
 		return tickerPrice, errors.New("Unable to get currency.")
 	}
+	tickerPrice.Pair = p
+	tickerPrice.Ask = tick.Ask
+	tickerPrice.Bid = tick.Bid
+	tickerPrice.Low = tick.Low
+	tickerPrice.Last = tick.Last
+	tickerPrice.Volume = tick.Volume
+	tickerPrice.High = tick.High
+	ticker.ProcessTicker(b.GetName(), p, tickerPrice)
+	return tickerPrice, nil
+}
+
+func (b *BTCE) GetTickerPrice2(p pair.CurrencyPair, tick BTCeTicker) (ticker.TickerPrice, error) {
+	var tickerPrice ticker.TickerPrice
+
 	tickerPrice.Pair = p
 	tickerPrice.Ask = tick.Buy
 	tickerPrice.Bid = tick.Sell

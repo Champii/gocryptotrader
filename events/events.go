@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/champii/gocryptotrader/common"
 	"github.com/champii/gocryptotrader/config"
@@ -232,6 +233,7 @@ func CheckEvents() {
 				}
 			}
 		}
+		time.Sleep(time.Second)
 	}
 }
 
