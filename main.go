@@ -92,6 +92,15 @@ func Get() *Bot {
 	return &bot
 }
 
+func (b Bot) GetExchangeByName(name string) exchange.IBotExchange {
+	for _, exch := range b.Exchanges {
+		if exch.GetName() == name {
+			return exch
+		}
+	}
+	return nil
+}
+
 func (b *Bot) Wait() {
 	<-b.shutdown
 	Shutdown()
@@ -223,13 +232,15 @@ func HandleInterrupt() {
 func Shutdown() {
 	log.Println("Bot shutting down..")
 	bot.config.Portfolio = portfolio.Portfolio
-	err := bot.config.SaveConfig("")
 
-	if err != nil {
-		log.Println("Unable to save config.")
-	} else {
-		log.Println("Config file saved successfully.")
-	}
+	// Do not save config on Exit
+	// err := bot.config.SaveConfig("")
+
+	// if err != nil {
+	// 	log.Println("Unable to save config.")
+	// } else {
+	// 	log.Println("Config file saved successfully.")
+	// }
 
 	log.Println("Exiting.")
 	os.Exit(1)
