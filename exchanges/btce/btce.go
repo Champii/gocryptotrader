@@ -35,6 +35,8 @@ const (
 	BTCE_REDEEM_COUPON       = "RedeemCoupon"
 )
 
+var lastNonce = time.Now().Unix()
+
 type BTCE struct {
 	exchange.ExchangeBase
 	Ticker map[string]BTCeTicker
@@ -115,9 +117,9 @@ func (b *BTCE) GetDepth(symbol string) (BTCEOrderbook, error) {
 	return depth, nil
 }
 
-func (b *BTCE) GetTrades(symbol string) ([]BTCETrades, error) {
+func (b *BTCE) GetTrades(symbol string) ([]exchange.Trades, error) {
 	type Response struct {
-		Data map[string][]BTCETrades
+		Data map[string][]exchange.Trades
 	}
 
 	response := Response{}
@@ -125,7 +127,7 @@ func (b *BTCE) GetTrades(symbol string) ([]BTCETrades, error) {
 
 	err := common.SendHTTPGetRequest(req, true, &response.Data)
 	if err != nil {
-		return []BTCETrades{}, err
+		return []exchange.Trades{}, err
 	}
 
 	trades := response.Data[symbol]
@@ -143,11 +145,11 @@ func (b *BTCE) GetAccountInfo() (BTCEAccountInfo, error) {
 	return result, nil
 }
 
-func (b *BTCE) GetActiveOrders(pair string) (map[string]BTCEActiveOrders, error) {
+func (b *BTCE) GetActiveOrders(pair string) (map[string]exchange.ActiveOrders, error) {
 	req := url.Values{}
 	req.Add("pair", pair)
 
-	var result map[string]BTCEActiveOrders
+	var result map[string]exchange.ActiveOrders
 	err := b.SendAuthenticatedHTTPRequest(BTCE_ACTIVE_ORDERS, req, &result)
 
 	if err != nil {
@@ -186,11 +188,11 @@ func (b *BTCE) CancelOrder(OrderID int64) (bool, error) {
 }
 
 //to-do: convert orderid to int64
-func (b *BTCE) Trade(pair, orderType string, amount, price float64) (float64, error) {
+func (b *BTCE) Trade(pair, orderType string, amount, price float64) (int64, error) {
 	req := url.Values{}
 	req.Add("pair", pair)
 	req.Add("type", orderType)
-	req.Add("amount", strconv.FormatFloat(amount, 'f', -1, 64))
+	req.Add("amount", strconv.FormatFloat(amount, 'f', 3, 64))
 	req.Add("rate", strconv.FormatFloat(price, 'f', -1, 64))
 
 	var result BTCETrade
@@ -223,7 +225,7 @@ func (b *BTCE) GetTransactionHistory(TIDFrom, Count, TIDEnd int64, order, since,
 	return result, nil
 }
 
-func (b *BTCE) GetTradeHistory(TIDFrom, Count, TIDEnd int64, order, since, end, pair string) (map[string]BTCETradeHistory, error) {
+func (b *BTCE) GetTradeHistory(TIDFrom, Count, TIDEnd int64, order, since, end, pair string) (map[string]exchange.TradeHistory, error) {
 	req := url.Values{}
 
 	req.Add("from", strconv.FormatInt(TIDFrom, 10))
@@ -235,7 +237,22 @@ func (b *BTCE) GetTradeHistory(TIDFrom, Count, TIDEnd int64, order, since, end, 
 	req.Add("end", end)
 	req.Add("pair", pair)
 
-	var result map[string]BTCETradeHistory
+	var result map[string]exchange.TradeHistory
+	err := b.SendAuthenticatedHTTPRequest(BTCE_TRADE_HISTORY, req, &result)
+
+	if err != nil {
+		return result, err
+	}
+
+	return result, nil
+}
+
+func (b *BTCE) GetTradeHistory2(Count int64) (map[string]exchange.TradeHistory, error) {
+	req := url.Values{}
+
+	req.Add("count", strconv.FormatInt(Count, 10))
+
+	var result map[string]exchange.TradeHistory
 	err := b.SendAuthenticatedHTTPRequest(BTCE_TRADE_HISTORY, req, &result)
 
 	if err != nil {
@@ -293,7 +310,8 @@ func (b *BTCE) RedeemCoupon(coupon string) (BTCERedeemCoupon, error) {
 }
 
 func (b *BTCE) SendAuthenticatedHTTPRequest(method string, values url.Values, result interface{}) (err error) {
-	nonce := strconv.FormatInt(time.Now().Unix(), 10)
+	nonce := strconv.FormatInt(lastNonce, 10)
+	lastNonce++
 	values.Set("nonce", nonce)
 	values.Set("method", method)
 

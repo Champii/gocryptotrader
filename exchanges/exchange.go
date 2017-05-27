@@ -45,6 +45,33 @@ type ExchangeBase struct {
 	APIUrl                      string
 }
 
+type Trades struct {
+	Type      string  `json:"type"`
+	Price     float64 `json:"bid"`
+	Amount    float64 `json:"amount"`
+	TID       int64   `json:"tid"`
+	Timestamp int64   `json:"timestamp"`
+}
+
+type TradeHistory struct {
+	Pair      string  `json:"pair"`
+	Type      string  `json:"type"`
+	Amount    float64 `json:"amount"`
+	Rate      float64 `json:"rate"`
+	OrderID   float64 `json:"order_id"`
+	MyOrder   int     `json:"is_your_order"`
+	Timestamp float64 `json:"timestamp"`
+}
+
+type ActiveOrders struct {
+	Pair             string  `json:"pair"`
+	Type             string  `json:"sell"`
+	Amount           float64 `json:"amount"`
+	Rate             float64 `json:"rate"`
+	TimestampCreated float64 `json:"time_created"`
+	Status           int     `json:"status"`
+}
+
 //IBotExchange : Enforces standard functions for all exchanges supported in gocryptotrader
 type IBotExchange interface {
 	Setup(exch config.ExchangeConfig)
@@ -56,6 +83,13 @@ type IBotExchange interface {
 	GetOrderbookEx(currency pair.CurrencyPair) (orderbook.OrderbookBase, error)
 	GetEnabledCurrencies() []string
 	GetExchangeAccountInfo() (ExchangeAccountInfo, error)
+
+	Trade(string, string, float64, float64) (int64, error)
+	GetTrades(string) ([]Trades, error)
+	GetTradeHistory(int64, int64, int64, string, string, string, string) (map[string]TradeHistory, error)
+	GetTradeHistory2(int64) (map[string]TradeHistory, error)
+	GetActiveOrders(string) (map[string]ActiveOrders, error)
+	CancelOrder(int64) (bool, error)
 }
 
 func (e *ExchangeBase) GetName() string {

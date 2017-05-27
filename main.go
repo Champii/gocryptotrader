@@ -1,6 +1,7 @@
 package gocryptotrader
 
 import (
+	"io/ioutil"
 	"log"
 	"os"
 	"os/signal"
@@ -98,6 +99,7 @@ func (b *Bot) Wait() {
 }
 
 func (b *Bot) Start(c chan string) {
+	log.SetOutput(ioutil.Discard)
 	HandleInterrupt()
 	b.config = &config.Cfg
 	log.Printf("Loading config file %s..\n", config.CONFIG_FILE)
@@ -126,23 +128,23 @@ func (b *Bot) Start(c chan string) {
 	log.Println("Bot Exchange support:")
 
 	b.Exchanges = []exchange.IBotExchange{
-		new(anx.ANX),
-		new(kraken.Kraken),
-		new(btcc.BTCC),
-		new(bitstamp.Bitstamp),
-		new(bitfinex.Bitfinex),
+		// new(anx.ANX),
+		// new(kraken.Kraken),
+		// new(btcc.BTCC),
+		// new(bitstamp.Bitstamp),
+		// new(bitfinex.Bitfinex),
 		new(btce.BTCE),
-		new(btcmarkets.BTCMarkets),
-		new(gdax.GDAX),
-		new(gemini.Gemini),
-		new(okcoin.OKCoin),
-		new(okcoin.OKCoin),
-		new(itbit.ItBit),
-		new(lakebtc.LakeBTC),
-		new(liqui.Liqui),
-		new(localbitcoins.LocalBitcoins),
-		new(poloniex.Poloniex),
-		new(huobi.HUOBI),
+		// new(btcmarkets.BTCMarkets),
+		// new(gdax.GDAX),
+		// new(gemini.Gemini),
+		// new(okcoin.OKCoin),
+		// new(okcoin.OKCoin),
+		// new(itbit.ItBit),
+		// new(lakebtc.LakeBTC),
+		// new(liqui.Liqui),
+		// new(localbitcoins.LocalBitcoins),
+		// new(poloniex.Poloniex),
+		// new(huobi.HUOBI),
 	}
 
 	for i := 0; i < len(b.Exchanges); i++ {

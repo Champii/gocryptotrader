@@ -40,13 +40,14 @@ func (b *BTCE) Run() {
 			}
 			for x, y := range ticker {
 				x = common.StringToUpper(x[0:3] + x[4:])
-				log.Printf("BTC-e %s: Last %f High %f Low %f Volume %f\n", x, y.Last, y.High, y.Low, y.Vol_cur)
+				// log.Printf("BTC-e %s: Last %f High %f Low %f Volume %f\n", x, y.Last, y.High, y.Low, y.Vol_cur)
 				b.Ticker[x] = y
 				b.GetTickerPrice2(pair.NewCurrencyPairFromString(pairsString), b.Ticker[x])
 				stats.AddExchangeInfo(b.GetName(), common.StringToUpper(x[0:3]), common.StringToUpper(x[4:]), y.Last, y.Vol_cur)
 			}
 		}()
-		time.Sleep(time.Second * b.RESTPollingDelay)
+		// time.Sleep(time.Second * b.RESTPollingDelay)
+		time.Sleep(time.Second)
 	}
 }
 
@@ -82,10 +83,10 @@ func (b *BTCE) GetTickerPrice2(p pair.CurrencyPair, tick BTCeTicker) (ticker.Tic
 }
 
 func (b *BTCE) GetOrderbookEx(p pair.CurrencyPair) (orderbook.OrderbookBase, error) {
-	ob, err := orderbook.GetOrderbook(b.GetName(), p)
-	if err == nil {
-		return ob, nil
-	}
+	// ob, err := orderbook.GetOrderbook(b.GetName(), p)
+	// if err == nil {
+	// 	return ob, nil
+	// }
 
 	var orderBook orderbook.OrderbookBase
 	orderbookNew, err := b.GetDepth(p.Pair().Lower().String())
@@ -93,15 +94,17 @@ func (b *BTCE) GetOrderbookEx(p pair.CurrencyPair) (orderbook.OrderbookBase, err
 		return orderBook, err
 	}
 
-	for x, _ := range orderbookNew.Bids {
-		data := orderbookNew.Bids[x]
-		orderBook.Bids = append(ob.Bids, orderbook.OrderbookItem{Price: data[0], Amount: data[1]})
-	}
+	// for x, _ := range orderbookNew.Bids {
+	// 	data := orderbookNew.Bids[x]
+	// 	orderBook.Bids = append(orderBook.Bids, orderbook.OrderbookItem{Price: data[0], Amount: data[1]})
+	// }
+	orderBook.Bids = append(orderBook.Bids, orderbook.OrderbookItem{Price: orderbookNew.Bids[0][0], Amount: orderbookNew.Bids[0][1]})
 
-	for x, _ := range orderbookNew.Asks {
-		data := orderbookNew.Asks[x]
-		orderBook.Asks = append(ob.Asks, orderbook.OrderbookItem{Price: data[0], Amount: data[1]})
-	}
+	// for x, _ := range orderbookNew.Asks {
+	// 	data := orderbookNew.Asks[x]
+	// 	orderBook.Asks = append(orderBook.Asks, orderbook.OrderbookItem{Price: data[0], Amount: data[1]})
+	// }
+	orderBook.Asks = append(orderBook.Asks, orderbook.OrderbookItem{Price: orderbookNew.Asks[0][0], Amount: orderbookNew.Asks[0][1]})
 
 	orderBook.Pair = p
 	orderbook.ProcessOrderbook(b.GetName(), p, orderBook)

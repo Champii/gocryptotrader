@@ -211,7 +211,7 @@ func CheckEvents() {
 					success := event.CheckCondition()
 					if success {
 						log.Printf("Event %d triggered on %s successfully.\n", event.ID, event.Exchange)
-						event.Executed = true
+						RemoveEvent(event.ID)
 					}
 				}
 			}

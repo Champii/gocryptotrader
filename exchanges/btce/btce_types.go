@@ -84,7 +84,7 @@ type BTCECancelOrder struct {
 type BTCETrade struct {
 	Received float64            `json:"received"`
 	Remains  float64            `json:"remains"`
-	OrderID  float64            `json:"order_id"`
+	OrderID  int64              `json:"order_id"`
 	Funds    map[string]float64 `json:"funds"`
 }
 
