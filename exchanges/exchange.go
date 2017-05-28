@@ -49,8 +49,8 @@ type Trades struct {
 	Type      string  `json:"type"`
 	Price     float64 `json:"bid"`
 	Amount    float64 `json:"amount"`
-	TID       int64   `json:"tid"`
-	Timestamp int64   `json:"timestamp"`
+	TID       float64 `json:"tid"`
+	Timestamp float64 `json:"timestamp"`
 }
 
 type TradeHistory struct {
@@ -59,7 +59,7 @@ type TradeHistory struct {
 	Amount    float64 `json:"amount"`
 	Rate      float64 `json:"rate"`
 	OrderID   float64 `json:"order_id"`
-	MyOrder   int     `json:"is_your_order"`
+	MyOrder   float64 `json:"is_your_order"`
 	Timestamp float64 `json:"timestamp"`
 }
 
@@ -69,7 +69,7 @@ type ActiveOrders struct {
 	Amount           float64 `json:"amount"`
 	Rate             float64 `json:"rate"`
 	TimestampCreated float64 `json:"time_created"`
-	Status           int     `json:"status"`
+	Status           float64 `json:"status"`
 }
 
 //IBotExchange : Enforces standard functions for all exchanges supported in gocryptotrader

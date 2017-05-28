@@ -22,7 +22,7 @@ type BTCETrades struct {
 	Price     float64 `json:"bid"`
 	Amount    float64 `json:"amount"`
 	TID       int64   `json:"tid"`
-	Timestamp int64   `json:"timestamp"`
+	Timestamp float64 `json:"timestamp"`
 }
 
 type BTCEResponse struct {
@@ -84,7 +84,7 @@ type BTCECancelOrder struct {
 type BTCETrade struct {
 	Received float64            `json:"received"`
 	Remains  float64            `json:"remains"`
-	OrderID  int64              `json:"order_id"`
+	OrderID  float64            `json:"order_id"`
 	Funds    map[string]float64 `json:"funds"`
 }
 

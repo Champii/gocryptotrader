@@ -192,7 +192,7 @@ func (b *BTCE) Trade(pair, orderType string, amount, price float64) (int64, erro
 	req := url.Values{}
 	req.Add("pair", pair)
 	req.Add("type", orderType)
-	req.Add("amount", strconv.FormatFloat(amount, 'f', 3, 64))
+	req.Add("amount", strconv.FormatFloat(amount, 'f', 4, 64))
 	req.Add("rate", strconv.FormatFloat(price, 'f', -1, 64))
 
 	var result BTCETrade
@@ -202,7 +202,13 @@ func (b *BTCE) Trade(pair, orderType string, amount, price float64) (int64, erro
 		return 0, err
 	}
 
-	return result.OrderID, nil
+	r, e := strconv.ParseInt(fmt.Sprintf("%.0f", result.OrderID), 10, 64)
+
+	if e != nil {
+		return 0, e
+	}
+
+	return r, nil
 }
 
 func (b *BTCE) GetTransactionHistory(TIDFrom, Count, TIDEnd int64, order, since, end string) (map[string]BTCETransHistory, error) {
@@ -251,6 +257,7 @@ func (b *BTCE) GetTradeHistory2(Count int64) (map[string]exchange.TradeHistory, 
 	req := url.Values{}
 
 	req.Add("count", strconv.FormatInt(Count, 10))
+	// req.Add("order", "DESC")
 
 	var result map[string]exchange.TradeHistory
 	err := b.SendAuthenticatedHTTPRequest(BTCE_TRADE_HISTORY, req, &result)
@@ -330,6 +337,11 @@ func (b *BTCE) SendAuthenticatedHTTPRequest(method string, values url.Values, re
 	resp, err := common.SendHTTPRequest("POST", BTCE_API_PRIVATE_URL, headers, strings.NewReader(encoded))
 
 	if err != nil {
+		str := err.Error()
+		if str[0:12] == "invalid nonce" {
+			nonce = str[len(str)-10 : len(str)]
+			return b.SendAuthenticatedHTTPRequest(method, values, result)
+		}
 		return err
 	}
 
